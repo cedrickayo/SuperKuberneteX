@@ -1,0 +1,228 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: superkube-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/create-databases.sh:/docker-entrypoint-initdb.d/01-create-databases.sh
+      - ./database/init.sql:/docker-entrypoint-initdb.d/02-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - superkube-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: superkube-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - superkube-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: superkube-auth
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: superkube
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: superkubernetex-jwt-secret-key-2024
+      JWT_EXPIRES_IN: 1h
+      REFRESH_TOKEN_EXPIRES_IN: 7d
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - superkube-network
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    container_name: superkube-payment
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: superkube
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: superkubernetex-jwt-secret-key-2024
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - superkube-network
+
+  # Instance 1
+  instance1:
+    build:
+      context: ./instance-service
+      dockerfile: Dockerfile
+    container_name: superkube-instance1
+    ports:
+      - "5001:5001"
+    environment:
+      PORT: 5001
+      INSTANCE_NAME: instance1
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: instance1_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: superkubernetex-jwt-secret-key-2024
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - instance1_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - superkube-network
+
+  # Instance 2
+  instance2:
+    build:
+      context: ./instance-service
+      dockerfile: Dockerfile
+    container_name: superkube-instance2
+    ports:
+      - "5002:5002"
+    environment:
+      PORT: 5002
+      INSTANCE_NAME: instance2
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: instance2_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: superkubernetex-jwt-secret-key-2024
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - instance2_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - superkube-network
+
+  # Instance 3
+  instance3:
+    build:
+      context: ./instance-service
+      dockerfile: Dockerfile
+    container_name: superkube-instance3
+    ports:
+      - "5003:5003"
+    environment:
+      PORT: 5003
+      INSTANCE_NAME: instance3
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: instance3_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: superkubernetex-jwt-secret-key-2024
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - instance3_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - superkube-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: superkube-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      AUTH_API_URL: http://auth-service:4000
+      PAYMENT_API_URL: http://payment-service:4001
+      INSTANCE1_API_URL: http://instance1:5001
+      INSTANCE2_API_URL: http://instance2:5002
+      INSTANCE3_API_URL: http://instance3:5003
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-pk_test_placeholder}
+    depends_on:
+      - auth-service
+      - payment-service
+      - instance1
+      - instance2
+      - instance3
+    networks:
+      - superkube-network
+
+networks:
+  superkube-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  instance1_uploads:
+  instance2_uploads:
+  instance3_uploads:
+
