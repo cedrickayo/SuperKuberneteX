@@ -1,0 +1,11 @@
+resources:
+  - auth-deployment.yaml
+  - auth-sec.yaml
+  - auth-svc.yaml
+  - namespace-app.yaml
+  - postgress-external-service.yaml
+  - grafana-external-service
+  - inst1-external-service
+  - inst2-external-service
+  - inst3-external-service
+  - namespace-app.yaml

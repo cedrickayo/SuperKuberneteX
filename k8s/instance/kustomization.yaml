@@ -1,0 +1,13 @@
+resources:
+- instance1-deployment.yaml
+- instance2-deployment.yaml
+- instance3-deployment.yaml
+- instance1-sec.yaml
+- instance2-sec.yaml
+- instance3-sec.yaml
+- instance1-svc.yaml
+- instance2-svc.yaml
+- instance3-svc.yaml
+- instance-pvc.yaml
+- namespace-instance.yaml
+- postgress-external-service.yaml

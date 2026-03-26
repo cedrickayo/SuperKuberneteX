@@ -28,7 +28,7 @@ export default function Pricing() {
     setLoading(planId)
 
     try {
-      const response = await fetch(`${process.env.PAYMENT_API_URL}/api/payment/checkout`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_PAYMENT_API_URL}/api/payment/checkout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

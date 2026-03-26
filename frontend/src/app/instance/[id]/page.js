@@ -18,9 +18,9 @@ export default function InstancePage() {
   const [newPage, setNewPage] = useState({ title: '', slug: '', content: '' })
 
   const API_URLS = {
-    '1': process.env.INSTANCE1_API_URL,
-    '2': process.env.INSTANCE2_API_URL,
-    '3': process.env.INSTANCE3_API_URL
+    '1': process.env.NEXT_PUBLIC_INSTANCE1_API_URL,
+    '2': process.env.NEXT_PUBLIC_INSTANCE2_API_URL,
+    '3': process.env.NEXT_PUBLIC_INSTANCE3_API_URL
   }
 
   const apiUrl = API_URLS[instanceId]

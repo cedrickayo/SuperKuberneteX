@@ -1,0 +1,4 @@
+resources:
+- payment-sec.yaml
+- payment-svc.yaml
+- payment-deployment.yaml

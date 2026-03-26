@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 # Docker Compose pour le developpement local
@@ -19,12 +20,29 @@ services:
       - ./database/create-databases.sh:/docker-entrypoint-initdb.d/01-create-databases.sh
       - ./database/init.sql:/docker-entrypoint-initdb.d/02-init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - superkube-network
+
+  #adminstration de postgress
+  pgadmin_service:
+    image: dpage/pgadmin4
+    container_name: my_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: cedric.kayo@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "15432:80"
+    networks:
+      - superkube-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
   # Redis Cache
   redis:
@@ -78,7 +96,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       JWT_SECRET: superkubernetex-jwt-secret-key-2024
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       FRONTEND_URL: http://localhost:3000
     volumes:
       - ./payment-service:/app
@@ -197,6 +215,7 @@ networks:
 
 volumes:
   postgres_data:
+  pgadmin-data:
   redis_data:
   instance1_uploads:
   instance2_uploads:

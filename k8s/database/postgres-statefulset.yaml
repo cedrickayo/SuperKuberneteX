@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-stateful
+  labels:
+    app: postgres
+  namespace: data
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: superkube-postgres
+        image: postgres:15-alpine
+        envFrom:  #injection des secrets comme variables d'evnvironnmement dans le container
+          - secretRef:
+              name: postgres-sec
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: init-db
+          mountPath: /docker-entrypoint-initdb.d/
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "postgres"]
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+          
+      volumes:
+      - name: init-db
+        configMap:
+          name: postgres-configmap-volume
+          items:
+          - key:  01-create-databases.sh
+            path: 01-create-databases.sh
+          - key: 02-init.sql
+            path: 02-init.sql
+
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+

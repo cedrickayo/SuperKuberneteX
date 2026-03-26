@@ -1,0 +1,5 @@
+resources:
+- frontend-deployment.yaml
+- frontend-svc.yaml
+- frontend-sec.yaml
+- frontend-sec-pub.yaml

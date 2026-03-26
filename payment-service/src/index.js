@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 4001;
 
 // Stripe configuration
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Middleware for JSON (except for webhooks)
 app.use((req, res, next) => {
@@ -31,7 +31,7 @@ const pool = new Pool({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'superkubernetex-secret-key';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://superkubernetex.local';
 
 // Plan configuration with Stripe Price IDs
 const PLANS = {

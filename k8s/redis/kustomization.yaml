@@ -1,0 +1,4 @@
+resources:
+- redis-pvc.yaml
+- redis-state.yaml
+- redis-svc.yaml

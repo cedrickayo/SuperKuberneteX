@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    release: prometheus-operator
+  name: auth-service-monitor
+  namespace: monitoring
+spec:
+  endpoints:
+  - path: /metrics
+    port: 4000-4000
+  namespaceSelector:
+    matchNames:
+    - app
+  selector:
+    matchLabels:
+        app: auth-service

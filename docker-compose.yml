@@ -16,7 +16,7 @@ services:
       - ./database/create-databases.sh:/docker-entrypoint-initdb.d/01-create-databases.sh
       - ./database/init.sql:/docker-entrypoint-initdb.d/02-init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,6 +45,7 @@ services:
       context: ./auth-service
       dockerfile: Dockerfile
     container_name: superkube-auth
+    image: cedrickayo82/superkube-auth:V1_C
     ports:
       - "4000:4000"
     environment:
@@ -74,6 +75,7 @@ services:
       context: ./payment-service
       dockerfile: Dockerfile
     container_name: superkube-payment
+    image: cedrickayo82/superkube-payment:v1_C1
     ports:
       - "4001:4001"
     environment:
@@ -104,6 +106,7 @@ services:
       context: ./instance-service
       dockerfile: Dockerfile
     container_name: superkube-instance1
+    image: cedrickayo82/superkube-instance1:V1_C
     ports:
       - "5001:5001"
     environment:
@@ -135,6 +138,7 @@ services:
       context: ./instance-service
       dockerfile: Dockerfile
     container_name: superkube-instance2
+    image: cedrickayo82/superkube-instance2:V1_C
     ports:
       - "5002:5002"
     environment:
@@ -166,6 +170,7 @@ services:
       context: ./instance-service
       dockerfile: Dockerfile
     container_name: superkube-instance3
+    image: cedrickayo82/superkube-instance3:V1_C
     ports:
       - "5003:5003"
     environment:
@@ -197,6 +202,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: superkube-frontend
+    image: cedrickayo82/superkube-frontend:v1_C7
     ports:
       - "3000:3000"
     environment:

@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   const fetchSubscription = async (token) => {
     try {
-      const response = await fetch(`${process.env.PAYMENT_API_URL}/api/payment/subscription`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_PAYMENT_API_URL}/api/payment/subscription`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await response.json()

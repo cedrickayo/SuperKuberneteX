@@ -1,0 +1,8 @@
+resources:
+  - postgres-sec.yaml
+  - postgres-svc.yaml
+  - postgres-statefulset.yaml
+  - postgres-pvc.yaml
+  - postgres-configmap_volume.yaml
+  - namespace-data.yaml
+  - postgres-dump.yaml
