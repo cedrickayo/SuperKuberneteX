@@ -5,4 +5,4 @@ resources:
   - postgres-pvc.yaml
   - postgres-configmap_volume.yaml
   - namespace-data.yaml
-  - postgres-dump.yaml
+  - postgres_dump.yaml

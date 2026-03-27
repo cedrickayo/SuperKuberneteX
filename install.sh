@@ -3,11 +3,12 @@ set -e # Arret du script à la premiere error detecté
 
 #Chargement des variables d'environnement
 set -a          # export auto
-source .env     # charge .env
+#source .env     # charge .env
 set +a          # stop export auto
 
 
 #clone du projet
+rm -rf SuperKuberneteX
 git clone 'https://github.com/cedrickayo/SuperKuberneteX.git'
 cd SuperKuberneteX
 
