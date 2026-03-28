@@ -24,17 +24,17 @@ echo "push reussi"
 
 # Deployment du backend
 echo " Deployment of postgres DB + PV "
-kubectl apply -k ./k8s/database/
+kubectl apply -k ./k8s/database/ --validate=false #Valide=false, evite que kubectl ne fasse une veriifcation coté server
 
 # Deploy all app + instances
 echo " Deploy Application in application layer " 
-kubectl apply -k ./k8s/frontend/ # Deployment du frontend va utiliser le fichier kustomization 
+kubectl apply -k ./k8s/frontend/ --validate=false # Deployment du frontend va utiliser le fichier kustomization 
 
 echo " Deploy Payment in application layer " 
-kubectl apply -k ./k8s/payment/ # Deployment de payment
+kubectl apply -k ./k8s/payment/ --validate=false # Deployment de payment
 
 echo " Deploy Application in instance layer " 
-kubectl apply -k ./k8s/instance/ # Deployment de instance
+kubectl apply -k ./k8s/instance/ --validate=false # Deployment de instance
 
 # Deploy  Ingress + SSL
 echo " Configure Ingress + SSL " 
