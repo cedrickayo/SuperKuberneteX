@@ -8,4 +8,4 @@ resources:
   - inst1-external-service
   - inst2-external-service
   - inst3-external-service
-  - namespace-app.yaml
+  - prometheus-external-service.yaml

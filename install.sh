@@ -30,6 +30,9 @@ kubectl apply -k ./k8s/database/ --validate=false #Valide=false, evite que kubec
 echo " Deploy Application in application layer " 
 kubectl apply -k ./k8s/frontend/ --validate=false # Deployment du frontend va utiliser le fichier kustomization 
 
+echo " Deploy Auth in application layer " 
+kubectl apply -k ./k8s/auth/ --validate=false
+
 echo " Deploy Payment in application layer " 
 kubectl apply -k ./k8s/payment/ --validate=false # Deployment de payment
 
