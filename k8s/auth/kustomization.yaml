@@ -4,8 +4,8 @@ resources:
   - auth-svc.yaml
   - namespace-app.yaml
   - postgress-external-service.yaml
-  - grafana-external-service
-  - inst1-external-service
-  - inst2-external-service
-  - inst3-external-service
+  - grafana-external-service.yaml
+  - inst1-external-service.yaml
+  - inst2-external-service.yaml
+  - inst3-external-service.yaml
   - prometheus-external-service.yaml
