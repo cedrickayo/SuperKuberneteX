@@ -3,3 +3,4 @@ resources:
 - frontend-svc.yaml
 - frontend-sec.yaml
 - frontend-sec-pub.yaml
+- namespace-app.yaml
